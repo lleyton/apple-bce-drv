@@ -2,6 +2,7 @@
 #define AAUDIO_H
 
 #include <linux/types.h>
+#include <sound/pcm.h>
 #include "../pci.h"
 #include "protocol_bce.h"
 #include "description.h"
@@ -58,11 +59,11 @@ struct aaudio_stream {
     struct snd_pcm_hardware *alsa_hw_desc;
     u32 latency;
 
-    struct spinlock start_io_sl;
-    struct completion start_io_compl;
-    bool needs_start_io_compl;
+    bool waiting_for_first_ts;
 
     ktime_t remote_timestamp;
+    snd_pcm_sframes_t frame_min;
+    int started;
 };
 struct aaudio_subdevice {
     struct aaudio_device *a;
